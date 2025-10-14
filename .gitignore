@@ -1,0 +1,59 @@
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# IDE/editor
+.vscode/
+.idea/
+*.iml
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Composer (root only)
+/vendor/
+
+# Logs
+*.log
+logs/
+public/wp-content/debug.log
+
+# Env / secrets
+.env
+.env.*
+*.local
+public/wp-config.php
+public/.htaccess
+public/.user.ini
+ssl_certificates/
+private/
+
+# WordPress content (generated)
+public/wp-content/cache/
+public/wp-content/backups/
+public/wp-content/upgrade/
+public/wp-content/uploads/
+public/wp-content/uploads-wpforms/
+public/wp-content/wflogs/
+public/wp-content/ai1wm-backups/
+public/wp-content/updraft/
+public/wp-content/advanced-cache.php
+public/wp-content/wp-cache-config.php
+
+# Build artifacts
+/dist/
+/build/
+.tmp/
+
+# SASS
+.sass-cache/
+
+# Misc caches/coverage
+coverage/
+.cache/
