@@ -1,0 +1,267 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  HQ
+  CLEANER
+  CUSTOMER
+}
+
+enum ServiceType {
+  HOME_CLEAN
+  PRESSURE_WASH
+  AUTO_DETAIL
+  CUSTOM
+}
+
+enum RequestStatus {
+  NEW
+  QUOTED
+  ACCEPTED
+  SCHEDULED
+  COMPLETED
+  CANCELED
+}
+
+enum JobStatus {
+  PENDING
+  CLAIMED
+  SCHEDULED
+  COMPLETED
+  CANCELED
+}
+
+enum IntegrationType {
+  OPENPHONE
+  WISE
+  ZELLE
+  PAYPAL
+  GOOGLE_CALENDAR
+  APPLE_CALENDAR
+  ADP_1099
+  SLACK
+}
+
+model Tenant {
+  id            String            @id @default(cuid())
+  name          String
+  slug          String            @unique
+  plan          String            @default("launch")
+  logoUrl       String?
+  primaryColor  String?           @default("#0fb77a")
+  timezone      String            @default("America/New_York")
+  customDomain  String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  users         User[]
+  services      Service[]
+  requests      ServiceRequest[]
+  jobs          Job[]
+  communityFeed CommunityPost[]
+  integrations  Integration[]
+}
+
+model User {
+  id         String   @id @default(cuid())
+  tenant     Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId   String
+  email      String   @unique
+  phone      String?
+  firstName  String
+  lastName   String
+  role       Role
+  avatarUrl  String?
+  status     String   @default("active")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  cleaner    CleanerProfile?
+}
+
+model CleanerProfile {
+  id             String    @id @default(cuid())
+  user           User      @relation(fields: [userId], references: [id])
+  userId         String    @unique
+  rating         Float     @default(5.0)
+  completedJobs  Int       @default(0)
+  serviceRadius  Int       @default(15)
+  active         Boolean   @default(true)
+  payoutMethod   String    @default("WISE")
+  availability   AvailabilitySlot[]
+  assignments    JobAssignment[]
+  skills         CleanerSkill[]
+}
+
+model CleanerSkill {
+  id        String       @id @default(cuid())
+  cleaner   CleanerProfile @relation(fields: [cleanerId], references: [id])
+  cleanerId String
+  label     String
+}
+
+model AvailabilitySlot {
+  id         String          @id @default(cuid())
+  cleaner    CleanerProfile  @relation(fields: [cleanerId], references: [id])
+  cleanerId  String
+  weekday    Int
+  startTime  String
+  endTime    String
+}
+
+model Service {
+  id          String      @id @default(cuid())
+  tenant      Tenant      @relation(fields: [tenantId], references: [id])
+  tenantId    String
+  name        String
+  type        ServiceType
+  description String?
+  baseRate    Float
+  unit        String       @default("flat")
+  durationMin Int          @default(120)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model ServiceRequest {
+  id              String        @id @default(cuid())
+  tenant          Tenant        @relation(fields: [tenantId], references: [id])
+  tenantId        String
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  addressLine1    String
+  addressLine2    String?
+  city            String
+  state           String
+  postalCode      String
+  lat             Float?
+  lng             Float?
+  serviceType     ServiceType
+  squareFootage   Int?
+  surfaces        String[]
+  preferredStart  DateTime?
+  preferredEnd    DateTime?
+  preferredWindows Json?
+  notes           String?
+  status          RequestStatus @default(NEW)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  quote           Quote?
+  job             Job?
+}
+
+model Quote {
+  id             String         @id @default(cuid())
+  request        ServiceRequest @relation(fields: [requestId], references: [id])
+  requestId      String         @unique
+  subtotal       Float
+  fees           Float
+  taxes          Float
+  total          Float
+  currency       String         @default("USD")
+  aiVersion      String         @default("v1")
+  smartNotes     String?
+  expiresAt      DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model Job {
+  id              String        @id @default(cuid())
+  tenant          Tenant        @relation(fields: [tenantId], references: [id])
+  tenantId        String
+  request         ServiceRequest @relation(fields: [requestId], references: [id])
+  requestId       String         @unique
+  status          JobStatus      @default(PENDING)
+  scheduledStart  DateTime?
+  scheduledEnd    DateTime?
+  crewSize        Int            @default(2)
+  payoutAmount    Float?
+  currency        String         @default("USD")
+  confirmationId  String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  assignments     JobAssignment[]
+  notifications   Notification[]
+}
+
+model JobAssignment {
+  id        String         @id @default(cuid())
+  job       Job            @relation(fields: [jobId], references: [id])
+  jobId     String
+  cleaner   CleanerProfile @relation(fields: [cleanerId], references: [id])
+  cleanerId String
+  claimedAt DateTime       @default(now())
+  status    String         @default("CLAIMED")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  job       Job?     @relation(fields: [jobId], references: [id])
+  jobId     String?
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId  String
+  channel   String
+  payload   Json
+  delivered Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model CalendarSync {
+  id           String   @id @default(cuid())
+  tenant       Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId     String
+  provider     String
+  accountEmail String
+  externalId   String
+  createdAt    DateTime @default(now())
+}
+
+model Integration {
+  id          String          @id @default(cuid())
+  tenant      Tenant          @relation(fields: [tenantId], references: [id])
+  tenantId    String
+  type        IntegrationType
+  status      String          @default("connected")
+  config      Json
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model CommunityPost {
+  id         String   @id @default(cuid())
+  tenant     Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId   String
+  title      String
+  body       String
+  mediaUrl   String?
+  authorName String
+  publishedAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId  String
+  actorId   String?
+  action    String
+  metadata  Json
+  createdAt DateTime @default(now())
+}
+
+model Automation {
+  id        String   @id @default(cuid())
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId  String
+  name      String
+  trigger   String
+  status    String   @default("active")
+  definition Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

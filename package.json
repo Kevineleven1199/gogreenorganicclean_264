@@ -1,0 +1,15 @@
+{
+  "name": "gogreenorganicclean",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/platform"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w apps/platform",
+    "build": "npm run build -w apps/platform",
+    "start": "npm run start -w apps/platform",
+    "lint": "npm run lint -w apps/platform",
+    "prisma:generate": "npm run prisma:generate -w apps/platform"
+  }
+}

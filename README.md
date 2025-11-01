@@ -1,45 +1,73 @@
-# GoGreenOrganicClean Site
+# GoGreenOS – Multi-tenant SaaS for GoGreen Organic Clean
 
-This repository contains a snapshot of the website codebase (WordPress/PHP and assets).
+This repository now houses the **GoGreenOS** platform: a multi-tenant Next.js application that replaces the legacy WordPress marketing site and Jobber workflows. WordPress remains available in read-only mode strictly for historical reference.
 
-## What's included
-- `public/` WordPress core, themes, and plugins
-- `mysqleditor/` database admin tooling
-- `ssl_certificates/` and `private/` directories (if present)
+## Repository layout
 
-## Git hygiene
-- Secrets and environment-specific files are ignored via `.gitignore` (e.g., `public/wp-config.php`, `.env`, caches, and uploads).
-- Binary assets are handled via `.gitattributes`.
+- `apps/platform/` – Next.js 14 application (App Router) that powers customer booking, AI quoting, crew marketplace, community feed, and automation dashboards.
+- `legacy-wordpress/` – Archived WordPress site kept for reference-only access. It is **not** deployed to Railway.
+- `mysqleditor/` – Deprecated phpMyAdmin tooling kept for completeness (optional to remove later).
 
-## Initializing and pushing to GitHub
-Use PowerShell from the repo root:
+## Local development
 
-```powershell
-# From the repository root
-Set-Location "C:\Users\xbone\gogreenorganicclean_264"
-
-# Initialize repo, add, and commit
-git init -b main
-git add .
-git commit -m "Initialize repository with baseline .gitignore, .gitattributes, README"
-
-# Add your GitHub remote (replace with your repo URL)
-# Example (HTTPS):
-# git remote add origin https://github.com/<your-username>/<your-repo>.git
-# Example (SSH):
-# git remote add origin git@github.com:<your-username>/<your-repo>.git
-
-# Push initial commit
-# git push -u origin main
+```bash
+npm install           # installs workspace dependencies
+npm run dev           # starts the Next.js app on http://localhost:3000
+npm run prisma:generate
 ```
 
-If you prefer GitHub CLI and are already authenticated:
+The project uses npm workspaces; all app-specific scripts are proxied through the root `package.json`.
 
-```powershell
-# Replace the name/visibility as desired
-# gh repo create <your-repo> --source . --public --push --disable-wiki --homepage "https://gogreenorganicclean.com"
+### Environment variables
+
+Create `apps/platform/.env.local` (or configure on Railway) with:
+
+```
+DATABASE_URL=postgres://...
+OPENAI_API_KEY=...
+OPENAI_MODEL=gpt-4o-mini
+OPENPHONE_API_KEY=...
+OPENPHONE_API_BASE_URL=https://api.openphone.com/v1/messages
+GOOGLE_SERVICE_ACCOUNT=service-account@project.iam.gserviceaccount.com
+GOOGLE_SERVICE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+GOOGLE_CALENDAR_ID=primary
 ```
 
-## Notes
-- Avoid committing credentials; keep `.env`, `wp-config.php`, and similar files out of version control.
-- Large media in `public/wp-content/uploads/` is ignored by default.
+Missing credentials will gracefully fall back to mocked behaviour (e.g., quote narratives, calendar sync).
+
+### Database
+
+The Prisma schema targets PostgreSQL. Run migrations once you have a Railway Postgres instance or local database.
+
+```bash
+npm run prisma:migrate -- --name init
+```
+
+## Railway deployment
+
+1. Create a new Railway project and provision a PostgreSQL database.
+2. Set the service to build from `apps/platform` with the default `npm install && npm run build` step and `npm run start` for the start command.
+3. Add the environment variables listed above to the service in Railway.
+4. Point your primary domain (e.g., `app.gogreenorganicclean.com`) to the Railway-generated URL.
+5. (Optional) Configure wildcard subdomains if you want per-tenant subdomains (`tenant.gogreenorganicclean.com`). The middleware falls back to tenant slug in the first path segment if no subdomain exists.
+
+### Treating WordPress as reference-only
+
+- The legacy WordPress instance now lives in `legacy-wordpress/`. Do **not** deploy it to Railway.
+- If you need to host the legacy content for archival access, publish it separately (e.g., behind basic auth on a static host) or run it locally.
+- Knowledge base articles or media you still want surfaced in GoGreenOS can be re-imported manually into the new platform.
+
+## Key app flows
+
+- `/request` – public intake form that feeds `POST /api/requests`, triggers AI quote generation, and notifies customers via OpenPhone.
+- `/{tenantSlug}/dashboard` – HQ command center with metrics, booking pipeline, and crew utilisation.
+- `/{tenantSlug}/requests` – triage queue for new leads.
+- `/{tenantSlug}/marketplace` – real-time job board for cleaners (65/35 revenue split automation hooks).
+- `/{tenantSlug}/community` – Nextdoor-style neighbor feed for virality and referrals.
+- `/{tenantSlug}/settings` – integration hub for OpenPhone, Wise, Zelle, PayPal, Google Calendar, and ADP 1099 workflows.
+
+## Next steps
+
+- Connect production APIs (OpenAI, OpenPhone, Wise, Google Workspace, PayPal, Zelle, ADP) through Railway secrets.
+- Implement authentication/authorization (e.g., NextAuth + Magic Links) for tenant admins, cleaners, and customers.
+- Build data ingestion scripts to migrate any remaining WordPress assets into GoGreenOS modules.
