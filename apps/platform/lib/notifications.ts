@@ -63,7 +63,7 @@ export const finalizeJobAutomation = async (jobId: string) => {
   }
 
   const cleanerEmails = job.assignments
-    .map((assignment) => assignment.cleaner.user.email)
+    .map((assignment: any) => assignment.cleaner.user.email)
     .filter(Boolean);
 
   await scheduleGoogleCalendarEvent({
