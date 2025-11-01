@@ -1,4 +1,3 @@
-import type { Notification } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export type OpenPhoneMessagePayload = {
@@ -19,9 +18,9 @@ export const sendOpenPhoneMessage = async (payload: OpenPhoneMessagePayload) => 
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENPHONE_API_KEY}`
+      Authorization: `Bearer ${process.env.OPENPHONE_API_KEY}`,
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   }).catch((error) => {
     console.error("Failed to call OpenPhone", error);
   });
@@ -36,14 +35,14 @@ export const logNotification = async (tenantId: string, jobId: string | null, pa
       jobId,
       channel: "openphone_sms",
       payload,
-      delivered: false
-    }
+      delivered: false,
+    },
   });
 };
 
-export const markNotificationDelivered = async (notification: Notification) => {
+export const markNotificationDelivered = async (notification: { id: string }) => {
   return prisma.notification.update({
     where: { id: notification.id },
-    data: { delivered: true }
+    data: { delivered: true },
   });
 };
