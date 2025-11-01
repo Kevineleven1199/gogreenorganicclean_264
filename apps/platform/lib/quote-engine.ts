@@ -1,12 +1,12 @@
 import OpenAI from "openai";
-import { ServiceRequest, ServiceType } from "@prisma/client";
+import { ServiceType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 const serviceBaseRates: Record<ServiceType, number> = {
   HOME_CLEAN: 0.22,
   PRESSURE_WASH: 0.35,
   AUTO_DETAIL: 0.28,
-  CUSTOM: 0.32
+  CUSTOM: 0.32,
 };
 
 const openaiClient = process.env.OPENAI_API_KEY
@@ -21,7 +21,7 @@ type QuoteResult = {
   smartNotes?: string;
 };
 
-export const estimateQuote = async (request: ServiceRequest): Promise<QuoteResult> => {
+export const estimateQuote = async (request: any): Promise<QuoteResult> => {
   const squareFootage = request.squareFootage ?? 2000;
   const baseRate = serviceBaseRates[request.serviceType] ?? serviceBaseRates.CUSTOM;
   const laborCost = squareFootage * baseRate;
@@ -37,7 +37,7 @@ export const estimateQuote = async (request: ServiceRequest): Promise<QuoteResul
       taxes,
       total: subtotal + fees + taxes,
       smartNotes:
-        "Connect OpenAI or your preferred LLM provider to generate customer-facing quote narratives."
+        "Connect OpenAI or your preferred LLM provider to generate customer-facing quote narratives.",
     };
   }
 
@@ -47,8 +47,8 @@ export const estimateQuote = async (request: ServiceRequest): Promise<QuoteResul
       squareFootage: request.squareFootage,
       surfaces: request.surfaces,
       city: request.city,
-      preferredWindow: request.preferredWindows
-    }
+      preferredWindow: request.preferredWindows,
+    },
   )}`;
 
   try {
@@ -56,10 +56,10 @@ export const estimateQuote = async (request: ServiceRequest): Promise<QuoteResul
       model: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
       messages: [
         { role: "system", content: "You write warm, premium yet concise messages." },
-        { role: "user", content: message }
+        { role: "user", content: message },
       ],
       temperature: 0.5,
-      max_tokens: 220
+      max_tokens: 220,
     });
 
     const smartNotes = completion.choices[0]?.message?.content?.trim();
@@ -69,7 +69,7 @@ export const estimateQuote = async (request: ServiceRequest): Promise<QuoteResul
       fees,
       taxes,
       total: subtotal + fees + taxes,
-      smartNotes: smartNotes ?? undefined
+      smartNotes: smartNotes ?? undefined,
     };
   } catch (error) {
     console.error("Quote generation failed", error);
@@ -79,14 +79,14 @@ export const estimateQuote = async (request: ServiceRequest): Promise<QuoteResul
       taxes,
       total: subtotal + fees + taxes,
       smartNotes:
-        "LLM quote narrative unavailable. Generated price using internal estimator."
+        "LLM quote narrative unavailable. Generated price using internal estimator.",
     };
   }
 };
 
 export const generateQuoteForRequest = async (requestId: string) => {
   const request = await prisma.serviceRequest.findUnique({
-    where: { id: requestId }
+    where: { id: requestId },
   });
 
   if (!request) {
@@ -97,7 +97,7 @@ export const generateQuoteForRequest = async (requestId: string) => {
 
   const quote = await prisma.quote.upsert({
     where: {
-      requestId
+      requestId,
     },
     update: {
       subtotal: quoteData.subtotal,
@@ -105,7 +105,7 @@ export const generateQuoteForRequest = async (requestId: string) => {
       taxes: quoteData.taxes,
       total: quoteData.total,
       smartNotes: quoteData.smartNotes,
-      aiVersion: process.env.OPENAI_MODEL ?? "baseline"
+      aiVersion: process.env.OPENAI_MODEL ?? "baseline",
     },
     create: {
       requestId,
@@ -114,15 +114,15 @@ export const generateQuoteForRequest = async (requestId: string) => {
       taxes: quoteData.taxes,
       total: quoteData.total,
       smartNotes: quoteData.smartNotes,
-      aiVersion: process.env.OPENAI_MODEL ?? "baseline"
-    }
+      aiVersion: process.env.OPENAI_MODEL ?? "baseline",
+    },
   });
 
   await prisma.serviceRequest.update({
     where: { id: requestId },
     data: {
-      status: "QUOTED"
-    }
+      status: "QUOTED",
+    },
   });
 
   return quote;
