@@ -1,8 +1,7 @@
 import OpenAI from "openai";
-import { ServiceType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
-const serviceBaseRates: Record<ServiceType, number> = {
+const serviceBaseRates: Record<string, number> = {
   HOME_CLEAN: 0.22,
   PRESSURE_WASH: 0.35,
   AUTO_DETAIL: 0.28,
@@ -23,107 +22,108 @@ type QuoteResult = {
 
 export const estimateQuote = async (request: any): Promise<QuoteResult> => {
   const squareFootage = request.squareFootage ?? 2000;
-  const baseRate = serviceBaseRates[request.serviceType] ?? serviceBaseRates.CUSTOM;
+  const baseRate =
+    serviceBaseRates[request.serviceType] ?? serviceBaseRates.CUSTOM;
   const laborCost = squareFootage * baseRate;
-  const surfacesMultiplier = 1 + (request.surfaces.length - 1) * 0.06;
+  const surfacesMultiplier =
+    1 + (request.surfaces.length - 1) * 0.06;
   const subtotal = Math.max(120, laborCost * surfacesMultiplier);
   const fees = subtotal * 0.05;
   const taxes = (subtotal + fees) * 0.07;
-
   if (!openaiClient) {
     return {
       subtotal,
       fees,
       taxes,
       total: subtotal + fees + taxes,
-      smartNotes:
-        "Connect OpenAI or your preferred LLM provider to generate customer-facing quote narratives.",
+      smartNotes: "Connect OpenAI or your preferred LLM provider to generate customer-facing quote narratives.",
     };
   }
 
-  const message = `You are an environmentally minded cleaning concierge. Create a short summary for a quote with these details: ${JSON.stringify(
-    {
-      serviceType: request.serviceType,
-      squareFootage: request.squareFootage,
-      surfaces: request.surfaces,
-      city: request.city,
-      preferredWindow: request.preferredWindows,
-    },
-  )}`;
+  const message = `You are an environmentally minded cleaning concierge. Create a short summary for a quote with these details:
+${JSON.stringify(
+  {
+    serviceType: request.serviceType,
+    squareFootage: squareFootage,
+    city: request.city,
+    surfaces: request.surfaces,
+    preferredWindows: request.preferredWindows,
+    total: subtotal + fees + taxes,
+  },
+  null,
+  2
+)}`;
 
   try {
-    const completion = await openaiClient.chat.completions.create({
-      model: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
+    const chatCompletion = await openaiClient.chat.completions.create({
       messages: [
-        { role: "system", content: "You write warm, premium yet concise messages." },
-        { role: "user", content: message },
+        {
+          role: "system",
+          content:
+            "You are a helpful assistant that creates short, friendly summaries of cleaning requests based on the quote calculation details provided.",
+        },
+        {
+          role: "user",
+          content: message,
+        },
       ],
-      temperature: 0.5,
-      max_tokens: 220,
+      model: "gpt-4o",
     });
 
-    const smartNotes = completion.choices[0]?.message?.content?.trim();
+    const smartNotes = chatCompletion.choices[0].message.content?.trim();
 
     return {
       subtotal,
       fees,
       taxes,
       total: subtotal + fees + taxes,
-      smartNotes: smartNotes ?? undefined,
+      smartNotes,
     };
   } catch (error) {
-    console.error("Quote generation failed", error);
     return {
       subtotal,
       fees,
       taxes,
       total: subtotal + fees + taxes,
-      smartNotes:
-        "LLM quote narrative unavailable. Generated price using internal estimator.",
+      smartNotes: "An error occurred while generating a summary.",
     };
   }
 };
 
-export const generateQuoteForRequest = async (requestId: string) => {
+export const generateQuoteForRequest = async (
+  requestId: string
+): Promise<void> => {
   const request = await prisma.serviceRequest.findUnique({
     where: { id: requestId },
+    include: {
+      services: true,
+      client: true,
+    },
   });
 
   if (!request) {
-    throw new Error("Request not found");
+    throw new Error("Service request not found.");
   }
 
   const quoteData = await estimateQuote(request);
 
-  const quote = await prisma.quote.upsert({
-    where: {
-      requestId,
-    },
+  await prisma.quote.upsert({
+    where: { serviceRequestId: requestId },
     update: {
       subtotal: quoteData.subtotal,
       fees: quoteData.fees,
       taxes: quoteData.taxes,
       total: quoteData.total,
       smartNotes: quoteData.smartNotes,
-      aiVersion: process.env.OPENAI_MODEL ?? "baseline",
     },
     create: {
-      requestId,
       subtotal: quoteData.subtotal,
       fees: quoteData.fees,
       taxes: quoteData.taxes,
       total: quoteData.total,
       smartNotes: quoteData.smartNotes,
-      aiVersion: process.env.OPENAI_MODEL ?? "baseline",
+      serviceRequestId: requestId,
+      userId: request.clientId,
     },
   });
-
-  await prisma.serviceRequest.update({
-    where: { id: requestId },
-    data: {
-      status: "QUOTED",
-    },
-  });
-
-  return quote;
 };
