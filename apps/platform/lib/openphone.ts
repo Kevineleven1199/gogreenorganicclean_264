@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export type OpenPhoneMessagePayload = {
@@ -28,13 +29,48 @@ export const sendOpenPhoneMessage = async (payload: OpenPhoneMessagePayload) => 
   return { status: "queued" } as const;
 };
 
-export const logNotification = async (tenantId: string, jobId: string | null, payload: Record<string, unknown>) => {
+const toJsonValue = (value: Record<string, unknown>): Prisma.JsonValue => {
+  const seen = new WeakSet();
+
+  try {
+    const serialised = JSON.stringify(
+      value,
+      (_key, val) => {
+        if (typeof val === "bigint") {
+          return val.toString();
+        }
+
+        if (typeof val === "object" && val !== null) {
+          if (seen.has(val)) {
+            return undefined;
+          }
+
+          seen.add(val);
+        }
+
+        return val;
+      },
+      2
+    );
+
+    return serialised ? (JSON.parse(serialised) as Prisma.JsonValue) : {};
+  } catch (error) {
+    console.error("Failed to serialise OpenPhone notification payload", error);
+    return {};
+  }
+};
+
+export const logNotification = async (
+  tenantId: string,
+  jobId: string | null,
+  payload: Record<string, unknown>
+) => {
   return prisma.notification.create({
     data: {
       tenantId,
       jobId,
       channel: "openphone_sms",
-      payload,
+      payload: toJsonValue(payload),
       delivered: false,
     },
   });
