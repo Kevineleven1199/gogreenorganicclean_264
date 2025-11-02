@@ -8,7 +8,12 @@ export const notifyCustomerQuoteReady = async (requestId: string) => {
     where: { id: requestId },
     include: {
       tenant: true,
-      quote: true
+      quote: true,
+      job: {
+        select: {
+          id: true
+        }
+      }
     }
   });
 
