@@ -64,7 +64,7 @@ model Tenant {
   requests      ServiceRequest[]
   jobs          Job[]
   communityFeed CommunityPost[]
-  integrations  TenantIntegration[]
+  integrations  Integration[]
   notifications Notification[]
   calendarSyncs CalendarSync[]
   auditLogs     AuditLog[]
@@ -226,7 +226,7 @@ model CalendarSync {
   createdAt    DateTime @default(now())
 }
 
-model TenantIntegration {
+model Integration {
   id          String          @id @default(cuid())
   tenant      Tenant          @relation(fields: [tenantId], references: [id])
   tenantId    String
