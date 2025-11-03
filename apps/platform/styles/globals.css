@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  font-feature-settings: "liga", "kern";
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  @apply bg-surface text-foreground font-sans antialiased;
+}
+
+body {
+  min-height: 100vh;
+}
+
+a {
+  @apply text-foreground transition-colors duration-200 ease-out;
+}
+
+.section-wrapper {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+.card {
+  @apply rounded-3xl border border-emerald-50/40 bg-white shadow-sm shadow-emerald-100/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-200/60;
+}
+
+.gradient-overlay {
+  background: linear-gradient(135deg, rgba(30, 81, 48, 0.82), rgba(60, 168, 106, 0.6));
+}
+
+.fade-up {
+  @apply opacity-0 translate-y-10;
+}

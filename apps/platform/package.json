@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "cross-env NEXT_DISABLE_LOCKFILE_PATCH=true prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "prisma:generate": "prisma generate",
@@ -16,19 +16,22 @@
     "@googleapis/calendar": "^9.1.0",
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.5",
+    "@radix-ui/react-slot": "^1.0.2",
     "@prisma/client": "^5.16.1",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "framer-motion": "^11.0.17",
     "googleapis": "^144.0.0",
     "lucide-react": "^0.379.0",
-    "next": "14.2.4",
+    "next": "15.0.0-canary.42",
     "openai": "^4.52.2",
     "pino": "^8.17.0",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
+    "react": "19.0.0-rc.0",
+    "react-dom": "19.0.0-rc.0",
+    "tailwind-merge": "^2.4.0",
     "zod": "^3.23.8",
-    "zustand": "^4.5.2"
+    "zustand": "^4.5.2",
+    "class-variance-authority": "^0.7.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.2",
@@ -36,11 +39,13 @@
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.18",
     "eslint": "^8.57.0",
-    "eslint-config-next": "14.2.4",
+    "eslint-config-next": "15.0.0-canary.42",
+    "cross-env": "^7.0.3",
     "postcss": "^8.4.38",
     "prettier": "^3.3.2",
     "prisma": "^5.16.1",
     "tailwindcss": "^3.4.4",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.4.5"
   }
 }

@@ -1,27 +1,37 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 const config: Config = {
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
     "./styles/**/*.{ts,tsx}",
-    "./lib/**/*.{ts,tsx}"
+    "./lib/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}"
   ],
   darkMode: "class",
   theme: {
     extend: {
       colors: {
         brand: {
-          50: "#e7fbf2",
-          100: "#c0f1d8",
-          200: "#91e6bd",
-          300: "#5edba2",
-          400: "#31d091",
-          500: "#0fb77a",
-          600: "#059164",
-          700: "#036f4f",
-          800: "#034f38",
-          900: "#013223"
+          DEFAULT: "#3CA86A",
+          50: "#F5F8F2",
+          100: "#E5F2E8",
+          200: "#CAE5D4",
+          300: "#A1D5B8",
+          400: "#72C498",
+          500: "#3CA86A",
+          600: "#2F8C55",
+          700: "#226C41",
+          800: "#1E5130",
+          900: "#163923"
+        },
+        foreground: "#1A1F1C",
+        accent: "#1E5130",
+        surface: "#F5F8F2",
+        muted: {
+          DEFAULT: "#E7EFE6",
+          foreground: "#3A5141"
         }
       },
       boxShadow: {
@@ -33,7 +43,7 @@ const config: Config = {
       }
     }
   },
-  plugins: []
+  plugins: [tailwindcssAnimate]
 };
 
 export default config;
