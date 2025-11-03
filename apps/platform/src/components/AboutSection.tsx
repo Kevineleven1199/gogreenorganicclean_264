@@ -18,13 +18,16 @@ export const AboutSection = () => (
           Professional All-Organic Cleaning Services in Sarasota, FL
         </motion.span>
         <motion.h2 variants={fadeUp} className="text-3xl font-semibold text-accent md:text-4xl">
-          Clean doesn&rsquo;t have to compromise your wellbeing
+          A healthier clean for every room
         </motion.h2>
         <motion.p variants={fadeUp} className="text-base leading-relaxed text-muted-foreground">
-          At Go Green Organic Clean, we believe a spotless home or workplace shouldn’t come at the expense of your health. Our team blends meticulous, hotel-inspired detailing with planet-safe products so every surface gleams without harsh residue. From weekly upkeep to specialty treatments, we build service plans around your routines, sensitivities, and standards.
+          At <strong>Go Green Organic Clean</strong>, we believe a spotless home or workplace shouldn’t come at the expense of your health. That’s why we use only eco-friendly, non-toxic products that are safe for your family, pets, and the planet.
         </motion.p>
         <motion.p variants={fadeUp} className="text-base leading-relaxed text-muted-foreground">
-          Locally owned and proudly serving Sarasota and neighboring counties, we treat every visit as an opportunity to protect the people and spaces you love most.
+          As Sarasota’s <strong>top-rated organic cleaning company</strong>, we take pride in delivering detail-driven results and a healthier clean you can trust. Whether it’s a one-time refresh or ongoing care, our team is here to make your space shine.
+        </motion.p>
+        <motion.p variants={fadeUp} className="text-base font-semibold uppercase tracking-[0.2em] text-brand-700">
+          We provide free, no-obligation quotes — call us today to schedule your estimate.
         </motion.p>
       </motion.div>
       <motion.div

@@ -8,22 +8,26 @@ import { fadeUp, staggerContainer } from "@/src/lib/animations";
 const PILLARS = [
   {
     title: "Eco Friendly",
-    description: "We use only eco-conscious cleaning products tested safe for your family, pets, and planet.",
+    description:
+      "We use only eco-conscious cleaning products that are thoroughly tested to be safe for your family, your pets, your home’s surfaces, and the planet.",
     icon: Leaf
   },
   {
     title: "Professional",
-    description: "With years of experience, our teams receive comprehensive in-house training.",
+    description:
+      "With years of experience in cleaning services, we pass our expertise directly to our teams through comprehensive in-house training.",
     icon: Sparkles
   },
   {
     title: "Security",
-    description: "All cleaners pass police checks and carry valid insurance.",
+    description:
+      "Each cleaner undergoes a thorough review process and must pass a mandatory police check and carry valid insurance—so you can enjoy complete peace of mind.",
     icon: ShieldCheck
   },
   {
     title: "Allergen Free",
-    description: "100% natural, non-toxic products free from harsh chemicals and allergens.",
+    description:
+      "We use only 100% natural, non-toxic products that are free from harsh chemicals and common allergens—creating a safe and healthy environment for you, your family, and your pets.",
     icon: Flower
   }
 ];
