@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "@googleapis/calendar": "^9.1.0",
-    "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.5",
     "@radix-ui/react-slot": "^1.0.2",
     "@prisma/client": "^5.16.1",
