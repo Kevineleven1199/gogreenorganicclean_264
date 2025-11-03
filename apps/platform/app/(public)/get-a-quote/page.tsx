@@ -6,7 +6,8 @@ const GetAQuotePage = () => (
       <div className="max-w-3xl">
         <h1 className="text-4xl font-semibold text-accent">Request a Free Quote</h1>
         <p className="mt-4 text-muted-foreground">
-          Share a few details about your space and preferred schedule. Our eco-friendly cleaning experts will respond with a personalized proposal and availability.
+          Share a few details about your space and preferred schedule. Our eco-friendly cleaning experts will respond with a personalized
+          proposal and availability.
         </p>
       </div>
       <ServiceRequestForm />
