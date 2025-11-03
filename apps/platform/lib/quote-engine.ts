@@ -95,10 +95,6 @@ export const generateQuoteForRequest = async (
 ): Promise<void> => {
   const request = await prisma.serviceRequest.findUnique({
     where: { id: requestId },
-    include: {
-      services: true,
-      client: true,
-    },
   });
 
   if (!request) {
@@ -108,7 +104,7 @@ export const generateQuoteForRequest = async (
   const quoteData = await estimateQuote(request);
 
   await prisma.quote.upsert({
-    where: { serviceRequestId: requestId },
+    where: { requestId },
     update: {
       subtotal: quoteData.subtotal,
       fees: quoteData.fees,
@@ -122,8 +118,7 @@ export const generateQuoteForRequest = async (
       taxes: quoteData.taxes,
       total: quoteData.total,
       smartNotes: quoteData.smartNotes,
-      serviceRequestId: requestId,
-      userId: request.clientId,
+      requestId,
     },
   });
 };

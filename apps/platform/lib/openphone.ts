@@ -29,7 +29,7 @@ export const sendOpenPhoneMessage = async (payload: OpenPhoneMessagePayload) => 
   return { status: "queued" } as const;
 };
 
-const toJsonValue = (value: Record<string, unknown>): Prisma.JsonValue => {
+const toJsonValue = (value: Record<string, unknown>): Prisma.InputJsonValue => {
   const seen = new WeakSet();
 
   try {
@@ -53,7 +53,7 @@ const toJsonValue = (value: Record<string, unknown>): Prisma.JsonValue => {
       2
     );
 
-    return serialised ? (JSON.parse(serialised) as Prisma.JsonValue) : {};
+    return serialised ? (JSON.parse(serialised) as Prisma.InputJsonValue) : {};
   } catch (error) {
     console.error("Failed to serialise OpenPhone notification payload", error);
     return {};
