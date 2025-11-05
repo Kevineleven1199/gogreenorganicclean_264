@@ -1,14 +1,23 @@
 import Link from "next/link";
 import Image from "next/image";
-import { CallbackForm } from "@/src/components/CallbackForm";
 
-const QUICK_LINKS = [
-  { label: "Who We Are", href: "https://gogreenorganicclean.com/about-us/" },
-  { label: "Our Residential Services", href: "https://gogreenorganicclean.com/property-type/residential/" },
-  { label: "Our Commercial Services", href: "https://gogreenorganicclean.com/property-type/commercial/" },
-  { label: "Get A Free Quote", href: "https://gogreenorganicclean.com/get-a-quote/" },
-  { label: "Privacy Policy", href: "https://gogreenorganicclean.com/privacy-policy/" },
-  { label: "Terms & Conditions", href: "https://gogreenorganicclean.com/terms-and-conditions/" }
+const NAV_LINKS = [
+  { label: "Home", href: "/" },
+  { label: "Services", href: "#services" },
+  { label: "Why Green", href: "#why-green" },
+  { label: "Process", href: "#process" },
+  { label: "Testimonials", href: "#testimonials" },
+  { label: "About", href: "#about" },
+  { label: "FAQ", href: "#faq" },
+  { label: "Get a Quote", href: "#quote" }
+];
+
+const SERVICE_AREAS = [
+  "Sarasota • Siesta Key • Longboat Key",
+  "Bradenton • Lakewood Ranch",
+  "St. Petersburg • Clearwater",
+  "Tampa • Brandon • Riverview",
+  "Land O’ Lakes • Wesley Chapel"
 ];
 
 const SOCIAL_LINKS = [
@@ -76,42 +85,24 @@ const SOCIAL_LINKS = [
 
 export const Footer = () => (
   <footer className="bg-accent text-white" id="contact">
-    <div className="section-wrapper grid gap-12 py-16 lg:grid-cols-4">
-      <div>
-        <h4 className="text-lg font-semibold">Quick Links</h4>
-        <ul className="mt-5 space-y-3 text-sm text-white/80">
-          {QUICK_LINKS.map((link) => (
-            <li key={link.label}>
-              <Link href={link.href} target="_blank" rel="noopener noreferrer" className="transition hover:text-brand-100">
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div>
-        <h4 className="text-lg font-semibold">Request A Callback</h4>
-        <div className="mt-5 max-w-sm">
-          <CallbackForm />
-        </div>
-      </div>
-
-      <div>
-        <h4 className="text-lg font-semibold">Get in Touch With Us</h4>
-        <div className="mt-5 space-y-3 text-sm text-white/80">
-          <Link href="tel:+19412717948" className="block text-lg font-semibold text-white">
-            (941) 271 – 7948
-          </Link>
-          <p>
-            Business Hours:<br />8:00 AM – 4:00 PM<br />Saturday – Sunday Closed
-          </p>
-        </div>
-      </div>
-
-      <div className="text-center lg:text-left">
-        <h4 className="text-lg font-semibold">Follow Us</h4>
-        <div className="mt-5 flex items-center justify-center gap-3 lg:justify-start">
+    <div className="section-wrapper grid gap-12 py-16 lg:grid-cols-[1.2fr_1fr_1fr_1fr]">
+      <div className="space-y-5">
+        <Link href="/" className="flex items-center gap-3">
+          <Image
+            src="/images/cropped-Mobile-Logo-164x76.png"
+            alt="Go Green Organic Clean logo"
+            width={164}
+            height={76}
+            className="h-12 w-auto object-contain"
+          />
+        </Link>
+        <p className="text-base leading-relaxed text-white/80">
+          Go Green Organic Clean delivers meticulously detailed cleaning with products that honor your health and Florida’s environment. Licensed, insured, and trusted by thousands of local families and businesses since 2020.
+        </p>
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/70">
+          Satisfaction guaranteed • Safe for kids & pets
+        </p>
+        <div className="flex items-center gap-3">
           {SOCIAL_LINKS.map((link) => (
             <Link
               key={link.label}
@@ -126,11 +117,51 @@ export const Footer = () => (
           ))}
         </div>
       </div>
+
+      <div>
+        <h4 className="text-lg font-semibold">Quick Links</h4>
+        <ul className="mt-5 space-y-3 text-base leading-relaxed text-white/80">
+          {NAV_LINKS.map((link) => (
+            <li key={link.label}>
+              <Link href={link.href} className="transition hover:text-brand-100">
+                {link.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h4 className="text-lg font-semibold">Contact</h4>
+        <div className="mt-5 space-y-4 text-base leading-relaxed text-white/80">
+          <Link href="tel:+19412717948" className="block text-lg font-semibold text-white">
+            (941) 271-7948
+          </Link>
+          <Link href="mailto:hello@gogreenorganicclean.com" className="block transition hover:text-brand-100">
+            hello@gogreenorganicclean.com
+          </Link>
+          <p>
+            Mon – Fri: 8:00 AM – 4:00 PM<br />
+            Sat – Sun: By appointment
+          </p>
+          <p className="text-sm uppercase tracking-[0.25em] text-white/60">Licensed & Insured • NPS 72</p>
+        </div>
+      </div>
+
+      <div>
+        <h4 className="text-lg font-semibold">Service Areas</h4>
+        <ul className="mt-5 space-y-3 text-base leading-relaxed text-white/80">
+          {SERVICE_AREAS.map((area) => (
+            <li key={area}>{area}</li>
+          ))}
+        </ul>
+      </div>
     </div>
 
     <div className="border-t border-white/10 bg-accent/95">
-      <div className="section-wrapper flex flex-col items-center justify-between gap-4 py-6 text-center text-xs text-white/70 sm:flex-row sm:text-left">
-        <p>Copyright © 2025 Go Green Organic Clean | Powered by Go Green Organic Clean</p>
+      <div className="section-wrapper flex flex-col items-center justify-between gap-4 py-6 text-center text-sm text-white/70 sm:flex-row sm:text-left">
+        <p>© {new Date().getFullYear()} Go Green Organic Clean. All rights reserved.</p>
+        <span>Licensed & Insured • EPA Safer Choice Products</span>
         <span className="flex items-center gap-2">
           <Image src="/images/en_US.png" alt="English" width={20} height={14} />
           English

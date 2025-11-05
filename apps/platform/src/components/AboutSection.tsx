@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { fadeUp, staggerContainer } from "@/src/lib/animations";
 
 export const AboutSection = () => (
-  <section className="bg-surface" id="who-we-are">
+  <section className="bg-surface" id="about">
     <div className="section-wrapper grid gap-10 py-20 md:grid-cols-2 md:items-center">
       <motion.div
         initial="hidden"
@@ -14,20 +14,20 @@ export const AboutSection = () => (
         variants={staggerContainer}
         className="space-y-6"
       >
-        <motion.span variants={fadeUp} className="text-sm font-semibold uppercase tracking-[0.25em] text-brand-600">
-          Professional All-Organic Cleaning Services in Sarasota, FL
+        <motion.span variants={fadeUp} className="text-sm font-semibold uppercase tracking-[0.3em] text-accent/70">
+          Locally Rooted • Family Owned • Sarasota Proud
         </motion.span>
-        <motion.h2 variants={fadeUp} className="text-3xl font-semibold text-accent md:text-4xl">
-          A healthier clean for every room
+        <motion.h2 variants={fadeUp} className="font-display text-3xl font-semibold leading-tight text-accent md:text-4xl">
+          Born from a belief that clean should never come with compromise
         </motion.h2>
-        <motion.p variants={fadeUp} className="text-base leading-relaxed text-muted-foreground">
-          At <strong>Go Green Organic Clean</strong>, we believe a spotless home or workplace shouldn’t come at the expense of your health. That’s why we use only eco-friendly, non-toxic products that are safe for your family, pets, and the planet.
+        <motion.p variants={fadeUp} className="text-base leading-relaxed text-muted-foreground md:text-lg">
+          Go Green Organic Clean started in Sarasota when we saw families and local businesses searching for safer options than the harsh chemicals used by traditional cleaners. We built a company around transparency, plant-powered products, and a crew you’d trust in your own home.
         </motion.p>
-        <motion.p variants={fadeUp} className="text-base leading-relaxed text-muted-foreground">
-          As Sarasota’s <strong>top-rated organic cleaning company</strong>, we take pride in delivering detail-driven results and a healthier clean you can trust. Whether it’s a one-time refresh or ongoing care, our team is here to make your space shine.
+        <motion.p variants={fadeUp} className="text-base leading-relaxed text-muted-foreground md:text-lg">
+          Today, our team expertly serves Sarasota, Manatee, and Hillsborough counties with certified green supplies, low-VOC processes, and friendly professionals who love making spaces shine. With an NPS score of 72 and hundreds of five-star reviews, we’re as committed to service as we are to sustainability.
         </motion.p>
-        <motion.p variants={fadeUp} className="text-base font-semibold uppercase tracking-[0.2em] text-brand-700">
-          We provide free, no-obligation quotes — call us today to schedule your estimate.
+        <motion.p variants={fadeUp} className="text-base font-semibold uppercase tracking-[0.2em] text-accent">
+          Your wellbeing is our mission. Your satisfaction is guaranteed.
         </motion.p>
       </motion.div>
       <motion.div

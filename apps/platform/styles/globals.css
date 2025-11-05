@@ -10,11 +10,24 @@
 
 html,
 body {
-  @apply bg-surface text-foreground font-sans antialiased;
+  font-size: 100%;
+  line-height: 1.65;
+  font-family: var(--font-body), sans-serif;
+  @apply bg-surface text-foreground antialiased;
 }
 
 body {
   min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display), sans-serif;
+  letter-spacing: -0.01em;
 }
 
 a {
@@ -26,7 +39,7 @@ a {
 }
 
 .card {
-  @apply rounded-3xl border border-emerald-50/40 bg-white shadow-sm shadow-emerald-100/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-200/60;
+  @apply rounded-3xl border border-brand-100/60 bg-white shadow-sm shadow-brand-100/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand-200/70;
 }
 
 .gradient-overlay {

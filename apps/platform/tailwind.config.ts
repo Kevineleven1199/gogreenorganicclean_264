@@ -14,32 +14,33 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          DEFAULT: "#3CA86A",
-          50: "#F5F8F2",
-          100: "#E5F2E8",
-          200: "#CAE5D4",
-          300: "#A1D5B8",
-          400: "#72C498",
-          500: "#3CA86A",
-          600: "#2F8C55",
-          700: "#226C41",
-          800: "#1E5130",
-          900: "#163923"
+          DEFAULT: "#4CAF50",
+          50: "#F1F8F4",
+          100: "#DFF0E3",
+          200: "#BCE1C4",
+          300: "#90CE9C",
+          400: "#63BA73",
+          500: "#4CAF50",
+          600: "#3F9844",
+          700: "#2E7D32",
+          800: "#1F5A22",
+          900: "#143B16"
         },
-        foreground: "#1A1F1C",
-        accent: "#1E5130",
-        surface: "#F5F8F2",
+        foreground: "#1F2421",
+        accent: "#2E7D32",
+        surface: "#F5F5F5",
         muted: {
-          DEFAULT: "#E7EFE6",
-          foreground: "#3A5141"
-        }
+          DEFAULT: "#E6EFE8",
+          foreground: "#4B6251"
+        },
+        sunshine: "#FFD54F"
       },
       boxShadow: {
         brand: "0 20px 45px -15px rgba(31, 187, 122, 0.45)"
       },
       fontFamily: {
-        display: ["'Poppins'", "ui-sans-serif", "system-ui"],
-        body: ["'Inter'", "ui-sans-serif", "system-ui"]
+        sans: ["'Inter'", "Helvetica", "Arial", "sans-serif"],
+        display: ["'Poppins'", "Helvetica", "Arial", "sans-serif"]
       }
     }
   },

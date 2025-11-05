@@ -5,21 +5,27 @@ import { PillarsSection } from "@/src/components/PillarsSection";
 import { ServicesSection } from "@/src/components/ServicesSection";
 import { HowItWorks } from "@/src/components/HowItWorks";
 import { ServiceAreasSection } from "@/src/components/ServiceAreasSection";
-import { PromoBanner } from "@/src/components/PromoBanner";
-import { QuickServicesRow } from "@/src/components/QuickServicesRow";
+import { StatsSection } from "@/src/components/StatsSection";
+import { TestimonialsSection } from "@/src/components/TestimonialsSection";
+import { CredentialsSection } from "@/src/components/CredentialsSection";
+import { FAQSection } from "@/src/components/FAQSection";
+import { QuoteSection } from "@/src/components/QuoteSection";
 import { Footer } from "@/src/components/Footer";
 
 const HomePage = () => (
   <main className="bg-surface">
     <NavBar />
     <HeroSection />
-    <AboutSection />
+    <StatsSection />
     <PillarsSection />
     <ServicesSection />
     <HowItWorks />
+    <CredentialsSection />
+    <TestimonialsSection />
+    <AboutSection />
     <ServiceAreasSection />
-    <PromoBanner />
-    <QuickServicesRow />
+    <FAQSection />
+    <QuoteSection />
     <Footer />
   </main>
 );

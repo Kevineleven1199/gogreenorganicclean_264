@@ -1,11 +1,43 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Sparkles, Home, Building2, RefreshCcw } from "lucide-react";
 import { fadeUp, staggerContainer } from "@/src/lib/animations";
 import { ServiceCard } from "@/src/components/ServiceCard";
 
+const SERVICES = [
+  {
+    title: "Healthy Home Cleaning",
+    description:
+      "Weekly, bi-weekly, or monthly visits tailored to your household rhythm. We maintain shine without synthetic fragrances or harsh residues.",
+    highlights: ["Dusting, sanitizing, and floor care with plant-based solutions", "Kitchen & bath detailing every visit", "Custom task list matched to your lifestyle"],
+    icon: Home
+  },
+  {
+    title: "Deep Refresh & Detox",
+    description:
+      "Reset your space with meticulous attention to baseboards, vents, appliances, and high-touch areas—perfect for seasonal resets or special events.",
+    highlights: ["High/low dusting, grout and fixture polishing", "HEPA-filter vacuuming to remove allergens", "Add-ons available for inside appliances & windows"],
+    icon: Sparkles
+  },
+  {
+    title: "Move-In / Move-Out Detail",
+    description:
+      "Leave no room overlooked before the keys change hands. We prepare homes and rentals with a chemical-free finish future residents will love.",
+    highlights: ["Cabinetry, closets, and appliances cleaned inside & out", "Construction dust and debris removal", "Landlord or realtor checklists welcomed"],
+    icon: RefreshCcw
+  },
+  {
+    title: "Eco Commercial Care",
+    description:
+      "Keep offices, studios, and clinics feeling fresh and professional. Flexible schedules minimize disruption while maintaining a toxin-free workspace.",
+    highlights: ["Night or off-hour visits available", "Electrostatic disinfecting with green products", "Custom scopes for lobbies, breakrooms, and shared areas"],
+    icon: Building2
+  }
+];
+
 export const ServicesSection = () => (
-  <section className="bg-gradient-to-r from-brand-50 via-white to-brand-50" id="services">
+  <section className="bg-gradient-to-b from-white via-brand-50/40 to-white" id="services">
     <div className="section-wrapper py-20">
       <motion.div
         initial="hidden"
@@ -14,15 +46,14 @@ export const ServicesSection = () => (
         variants={staggerContainer}
         className="mx-auto max-w-3xl text-center"
       >
-        <motion.h2 variants={fadeUp} className="text-3xl font-semibold text-accent md:text-4xl">
-          Our Top Services
+        <motion.span variants={fadeUp} className="text-sm font-semibold uppercase tracking-[0.3em] text-accent/70">
+          Services
+        </motion.span>
+        <motion.h2 variants={fadeUp} className="mt-4 font-display text-3xl font-semibold leading-tight text-accent md:text-4xl">
+          Organic cleaning packages for every property
         </motion.h2>
-        <motion.p variants={fadeUp} className="mt-4 text-base text-muted-foreground">
-          Explore our most requested services — Basic, Deep, and Move In/Out —<br />all customizable with FREE estimates. Looking for more?
-          <a className="text-brand-600 underline underline-offset-4" href="https://gogreenorganicclean.com/services/" target="_blank" rel="noopener noreferrer">
-            {" "}We also provide a full suite of special services
-          </a>{" "}
-          to fit your property perfectly.
+        <motion.p variants={fadeUp} className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">
+          Residential, commercial, and specialty cleans built around healthier living. Choose the support you need—we’ll craft the perfect plan and keep it green.
         </motion.p>
       </motion.div>
 
@@ -31,52 +62,11 @@ export const ServicesSection = () => (
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
         variants={staggerContainer}
-        className="mt-12 grid gap-6 lg:grid-cols-3"
+        className="mt-12 grid gap-6 lg:grid-cols-2"
       >
-        <ServiceCard
-          title="Regular Clean (Basic)"
-          image="/images/Untitled-design-2-1.png"
-          ctaHref="https://gogreenorganicclean.com/get-a-quote/"
-        >
-          <p>
-            <strong>Perfect for regular upkeep and a consistently fresh home.</strong>
-          </p>
-          <p>
-            Our Standard Cleaning covers the essentials that make the biggest daily impact: dusting reachable surfaces, vacuuming and mopping floors, sanitizing sinks, countertops, and bathrooms, wiping mirrors, changing linens, and making beds. It’s designed to keep your home looking and feeling great between deeper cleans every single time.
-          </p>
-          <p>
-            <strong>👉 Ideal for:</strong> Weekly or bi-weekly maintenance, busy households, or anyone wanting a reliable clean without the extras!
-          </p>
-        </ServiceCard>
-
-        <ServiceCard
-          title="Deep Clean"
-          image="/images/Untitled-design-6-1.png"
-          ctaHref="https://gogreenorganicclean.com/get-a-quote/"
-        >
-          <p>
-            Go beyond surface shine with our <strong>most detailed, top-to-bottom service.</strong> Deep Cleaning includes everything in our Standard package plus attention to often-missed areas like baseboards, wall art, ceiling fans, furniture surfaces, lamps, and appliance exteriors. Bathrooms and kitchens get extra scrubbing to remove soap scum, polish fixtures, and restore that sparkling finish.
-          </p>
-          <p>
-            <strong>👉 Ideal for:</strong> Seasonal refreshes, special occasions, or when your home needs a reset beyond routine cleaning.
-          </p>
-        </ServiceCard>
-
-        <ServiceCard
-          title="Move In/Out Clean"
-          image="/images/Untitled-design-7-1.png"
-          ctaHref="https://gogreenorganicclean.com/get-a-quote/"
-        >
-          <p>
-            <strong>A full-detail cleaning package — perfect for move-ins and move-outs.</strong>
-          </p>
-          <p>
-            Move In/Out Cleaning includes every detail of our Deep Clean, with added focus on preparing a home for its next chapter: inside cabinets and drawers, inside appliances (oven, fridge, microwave), garage sweep, detailed baseboards, and interior windows. We leave no corner untouched so you can hand over the keys with confidence — or step into a fresh, spotless home.
-          </p>
-          <p>
-            <strong>👉 Ideal for:</strong> Tenants securing deposits, landlords prepping for new occupants, or families moving into a new home.
-          </p>
-        </ServiceCard>
+        {SERVICES.map((service) => (
+          <ServiceCard key={service.title} {...service} />
+        ))}
       </motion.div>
     </div>
   </section>
