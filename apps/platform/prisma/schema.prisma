@@ -37,6 +37,34 @@ enum JobStatus {
   CANCELED
 }
 
+enum SchedulingStatus {
+  PENDING
+  SELECTED
+  DECLINED
+  EXPIRED
+}
+
+enum PaymentProvider {
+  STRIPE
+  PAYPAL
+  MANUAL
+}
+
+enum PaymentStatus {
+  PENDING
+  AUTHORIZED
+  CAPTURED
+  REFUNDED
+  FAILED
+}
+
+enum PayoutStatus {
+  QUEUED
+  PROCESSING
+  SENT
+  FAILED
+}
+
 enum IntegrationType {
   OPENPHONE
   WISE
@@ -49,16 +77,16 @@ enum IntegrationType {
 }
 
 model Tenant {
-  id            String            @id @default(cuid())
+  id            String           @id @default(cuid())
   name          String
-  slug          String            @unique
-  plan          String            @default("launch")
+  slug          String           @unique
+  plan          String           @default("launch")
   logoUrl       String?
-  primaryColor  String?           @default("#0fb77a")
-  timezone      String            @default("America/New_York")
+  primaryColor  String?          @default("#0fb77a")
+  timezone      String           @default("America/New_York")
   customDomain  String?
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
   users         User[]
   services      Service[]
   requests      ServiceRequest[]
@@ -72,49 +100,50 @@ model Tenant {
 }
 
 model User {
-  id         String   @id @default(cuid())
-  tenant     Tenant   @relation(fields: [tenantId], references: [id])
-  tenantId   String
-  email      String   @unique
-  phone      String?
-  firstName  String
-  lastName   String
-  role       Role
-  avatarUrl  String?
-  status     String   @default("active")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  cleaner    CleanerProfile?
+  id        String          @id @default(cuid())
+  tenant    Tenant          @relation(fields: [tenantId], references: [id])
+  tenantId  String
+  email     String          @unique
+  phone     String?
+  firstName String
+  lastName  String
+  role      Role
+  avatarUrl String?
+  status    String          @default("active")
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  cleaner   CleanerProfile?
 }
 
 model CleanerProfile {
-  id             String    @id @default(cuid())
-  user           User      @relation(fields: [userId], references: [id])
-  userId         String    @unique
-  rating         Float     @default(5.0)
-  completedJobs  Int       @default(0)
-  serviceRadius  Int       @default(15)
-  active         Boolean   @default(true)
-  payoutMethod   String    @default("WISE")
-  availability   AvailabilitySlot[]
-  assignments    JobAssignment[]
-  skills         CleanerSkill[]
+  id            String             @id @default(cuid())
+  user          User               @relation(fields: [userId], references: [id])
+  userId        String             @unique
+  rating        Float              @default(5.0)
+  completedJobs Int                @default(0)
+  serviceRadius Int                @default(15)
+  active        Boolean            @default(true)
+  payoutMethod  String             @default("WISE")
+  availability  AvailabilitySlot[]
+  assignments   JobAssignment[]
+  skills        CleanerSkill[]
+  payouts       CleanerPayout[]
 }
 
 model CleanerSkill {
-  id        String       @id @default(cuid())
+  id        String         @id @default(cuid())
   cleaner   CleanerProfile @relation(fields: [cleanerId], references: [id])
   cleanerId String
   label     String
 }
 
 model AvailabilitySlot {
-  id         String          @id @default(cuid())
-  cleaner    CleanerProfile  @relation(fields: [cleanerId], references: [id])
-  cleanerId  String
-  weekday    Int
-  startTime  String
-  endTime    String
+  id        String         @id @default(cuid())
+  cleaner   CleanerProfile @relation(fields: [cleanerId], references: [id])
+  cleanerId String
+  weekday   Int
+  startTime String
+  endTime   String
 }
 
 model Service {
@@ -125,73 +154,77 @@ model Service {
   type        ServiceType
   description String?
   baseRate    Float
-  unit        String       @default("flat")
-  durationMin Int          @default(120)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  unit        String      @default("flat")
+  durationMin Int         @default(120)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model ServiceRequest {
-  id              String        @id @default(cuid())
-  tenant          Tenant        @relation(fields: [tenantId], references: [id])
-  tenantId        String
-  customerName    String
-  customerEmail   String
-  customerPhone   String
-  addressLine1    String
-  addressLine2    String?
-  city            String
-  state           String
-  postalCode      String
-  lat             Float?
-  lng             Float?
-  serviceType     ServiceType
-  squareFootage   Int?
-  surfaces        String[]
-  preferredStart  DateTime?
-  preferredEnd    DateTime?
-  preferredWindows Json?
-  notes           String?
-  status          RequestStatus @default(NEW)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  quote           Quote?
-  job             Job?
+  id                String                 @id @default(cuid())
+  tenant            Tenant                 @relation(fields: [tenantId], references: [id])
+  tenantId          String
+  customerName      String
+  customerEmail     String
+  customerPhone     String
+  addressLine1      String
+  addressLine2      String?
+  city              String
+  state             String
+  postalCode        String
+  lat               Float?
+  lng               Float?
+  serviceType       ServiceType
+  squareFootage     Int?
+  surfaces          String[]
+  preferredStart    DateTime?
+  preferredEnd      DateTime?
+  preferredWindows  Json?
+  notes             String?
+  status            RequestStatus          @default(NEW)
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  quote             Quote?
+  job               Job?
+  schedulingOptions SchedulingPreference[]
+  payments          PaymentRecord[]
 }
 
 model Quote {
-  id             String         @id @default(cuid())
-  request        ServiceRequest @relation(fields: [requestId], references: [id])
-  requestId      String         @unique
-  subtotal       Float
-  fees           Float
-  taxes          Float
-  total          Float
-  currency       String         @default("USD")
-  aiVersion      String         @default("v1")
-  smartNotes     String?
-  expiresAt      DateTime?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id         String         @id @default(cuid())
+  request    ServiceRequest @relation(fields: [requestId], references: [id])
+  requestId  String         @unique
+  subtotal   Float
+  fees       Float
+  taxes      Float
+  total      Float
+  currency   String         @default("USD")
+  aiVersion  String         @default("v1")
+  smartNotes String?
+  expiresAt  DateTime?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
 }
 
 model Job {
-  id              String        @id @default(cuid())
-  tenant          Tenant        @relation(fields: [tenantId], references: [id])
-  tenantId        String
-  request         ServiceRequest @relation(fields: [requestId], references: [id])
-  requestId       String         @unique
-  status          JobStatus      @default(PENDING)
-  scheduledStart  DateTime?
-  scheduledEnd    DateTime?
-  crewSize        Int            @default(2)
-  payoutAmount    Float?
-  currency        String         @default("USD")
-  confirmationId  String?
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  assignments     JobAssignment[]
-  notifications   Notification[]
+  id             String          @id @default(cuid())
+  tenant         Tenant          @relation(fields: [tenantId], references: [id])
+  tenantId       String
+  request        ServiceRequest  @relation(fields: [requestId], references: [id])
+  requestId      String          @unique
+  status         JobStatus       @default(PENDING)
+  scheduledStart DateTime?
+  scheduledEnd   DateTime?
+  crewSize       Int             @default(2)
+  payoutAmount   Float?
+  currency       String          @default("USD")
+  confirmationId String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  assignments    JobAssignment[]
+  notifications  Notification[]
+  payouts        CleanerPayout[]
+  calendarEvent  CalendarEvent?
 }
 
 model JobAssignment {
@@ -202,6 +235,64 @@ model JobAssignment {
   cleanerId String
   claimedAt DateTime       @default(now())
   status    String         @default("CLAIMED")
+}
+
+model SchedulingPreference {
+  id          String           @id @default(cuid())
+  request     ServiceRequest   @relation(fields: [requestId], references: [id])
+  requestId   String
+  windowStart DateTime
+  windowEnd   DateTime
+  priority    Int              @default(1)
+  status      SchedulingStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model PaymentRecord {
+  id               String          @id @default(cuid())
+  request          ServiceRequest  @relation(fields: [requestId], references: [id])
+  requestId        String
+  quoteId          String?
+  provider         PaymentProvider
+  providerIntentId String?
+  amount           Float
+  currency         String          @default("USD")
+  status           PaymentStatus   @default(PENDING)
+  deposit          Boolean         @default(false)
+  metadata         Json?
+  postedAt         DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+model CleanerPayout {
+  id               String          @id @default(cuid())
+  job              Job             @relation(fields: [jobId], references: [id])
+  jobId            String
+  cleaner          CleanerProfile  @relation(fields: [cleanerId], references: [id])
+  cleanerId        String
+  provider         PaymentProvider
+  providerPayoutId String?
+  amount           Float
+  currency         String          @default("USD")
+  status           PayoutStatus    @default(QUEUED)
+  initiatedAt      DateTime?       @default(now())
+  completedAt      DateTime?
+  failureReason    String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+model CalendarEvent {
+  id         String   @id @default(cuid())
+  job        Job      @relation(fields: [jobId], references: [id])
+  jobId      String   @unique
+  provider   String   @default("google")
+  externalId String
+  status     String   @default("tentative")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Notification {
@@ -227,24 +318,24 @@ model CalendarSync {
 }
 
 model Integration {
-  id          String          @id @default(cuid())
-  tenant      Tenant          @relation(fields: [tenantId], references: [id])
-  tenantId    String
-  type        IntegrationType
-  status      String          @default("connected")
-  config      Json
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id        String          @id @default(cuid())
+  tenant    Tenant          @relation(fields: [tenantId], references: [id])
+  tenantId  String
+  type      IntegrationType
+  status    String          @default("connected")
+  config    Json
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 }
 
 model CommunityPost {
-  id         String   @id @default(cuid())
-  tenant     Tenant   @relation(fields: [tenantId], references: [id])
-  tenantId   String
-  title      String
-  body       String
-  mediaUrl   String?
-  authorName String
+  id          String   @id @default(cuid())
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId    String
+  title       String
+  body        String
+  mediaUrl    String?
+  authorName  String
   publishedAt DateTime @default(now())
 }
 
@@ -259,13 +350,13 @@ model AuditLog {
 }
 
 model Automation {
-  id        String   @id @default(cuid())
-  tenant    Tenant   @relation(fields: [tenantId], references: [id])
-  tenantId  String
-  name      String
-  trigger   String
-  status    String   @default("active")
+  id         String   @id @default(cuid())
+  tenant     Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId   String
+  name       String
+  trigger    String
+  status     String   @default("active")
   definition Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
