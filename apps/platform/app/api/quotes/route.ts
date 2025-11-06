@@ -1,12 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import {
-  calculateQuote,
-  type QuoteAddOn,
-  type QuoteFrequency,
-  type QuoteLocationTier,
-  type QuoteServiceType
-} from "@/src/lib/pricing";
+import { calculateQuote, type QuoteAddOn, type QuoteFrequency, type QuoteLocationTier, type QuoteServiceType } from "@/src/lib/pricing";
 import { prisma } from "@/lib/prisma";
 import {
   JobStatus,
@@ -17,6 +11,18 @@ import {
 } from "@prisma/client";
 import { sendOperationalSms, sendEmail, sendSms } from "@/src/lib/notifications";
 
+const SERVICE_TYPE_VALUES = ["healthy_home", "deep_refresh", "move_in_out", "commercial"] as const;
+const FREQUENCY_VALUES = ["one_time", "weekly", "biweekly", "monthly"] as const;
+const LOCATION_VALUES = ["sarasota", "manatee", "pinellas", "hillsborough", "pasco", "out_of_area"] as const;
+const ADD_ON_VALUES = [
+  "inside_appliances",
+  "interior_windows",
+  "pressure_washing",
+  "car_detailing",
+  "laundry_organization",
+  "eco_disinfection"
+] as const;
+
 const quoteRequestSchema = z.object({
   action: z.enum(["preview", "accept", "decline"]).default("preview"),
   quoteId: z.string().optional(),
@@ -25,13 +31,13 @@ const quoteRequestSchema = z.object({
   phone: z.string().min(7).max(18),
   address: z.string().max(160).optional().default(""),
   city: z.string().max(120).optional().default(""),
-  serviceType: z.enum(["healthy_home", "deep_refresh", "move_in_out", "commercial"] satisfies QuoteServiceType[]),
-  frequency: z.enum(["one_time", "weekly", "biweekly", "monthly"] satisfies QuoteFrequency[]),
-  locationTier: z.enum(["sarasota", "manatee", "pinellas", "hillsborough", "pasco", "out_of_area"] satisfies QuoteLocationTier[]),
+  serviceType: z.enum(SERVICE_TYPE_VALUES),
+  frequency: z.enum(FREQUENCY_VALUES),
+  locationTier: z.enum(LOCATION_VALUES),
   bedrooms: z.coerce.number().int().min(0).max(9),
   bathrooms: z.coerce.number().int().min(0).max(9),
   squareFootage: z.coerce.number().min(400).max(8500),
-  addOns: z.array(z.enum(["inside_appliances", "interior_windows", "pressure_washing", "car_detailing", "laundry_organization", "eco_disinfection"] satisfies QuoteAddOn[])).optional().default([]),
+  addOns: z.array(z.enum(ADD_ON_VALUES)).optional().default([]),
   preferredDate: z.string().max(40).optional(),
   notes: z.string().max(600).optional(),
   isFirstTimeClient: z.boolean().optional().default(true)

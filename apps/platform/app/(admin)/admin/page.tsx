@@ -8,6 +8,11 @@ const quickLinks = [
     href: "/admin/requests"
   },
   {
+    title: "Manage Team",
+    description: "Invite new HQ managers or cleaners and view real-time crew stats.",
+    href: "/admin/team"
+  },
+  {
     title: "Configure Automations",
     description: "Fine-tune job routing, notifications, and revenue splits for each tenant.",
     href: "/admin/automations"
