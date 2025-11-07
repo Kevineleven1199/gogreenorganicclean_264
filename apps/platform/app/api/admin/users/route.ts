@@ -3,7 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { Role } from "@prisma/client";
 
-const ALLOWED_ROLES = [Role.HQ, Role.CLEANER] as const;
+const ALLOWED_ROLES: Role[] = [Role.HQ, Role.CLEANER];
 
 const createUserSchema = z.object({
   firstName: z.string().min(2),

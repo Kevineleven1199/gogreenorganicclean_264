@@ -2,7 +2,7 @@ import Stripe from "stripe";
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const stripeAccount = process.env.STRIPE_CONNECTED_ACCOUNT_ID;
-const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, { apiVersion: "2023-10-16" }) : null;
+const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, { apiVersion: "2023-08-16" }) : null;
 
 const PAYPAL_API_BASE =
   process.env.PAYPAL_ENV === "live" ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";

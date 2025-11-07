@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 
 export const getTenantFromRequest = async (slug?: string) => {
-  const requestHeaders = headers();
+  const requestHeaders = await headers();
   const headerSlug = requestHeaders.get("x-tenant-slug") ?? undefined;
   const effectiveSlug = slug ?? headerSlug ?? "gogreen";
 

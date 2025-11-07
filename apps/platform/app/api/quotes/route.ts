@@ -158,6 +158,7 @@ export const POST = async (request: Request) => {
             data: {
               subtotal: breakdown.totalBeforeDiscount,
               fees: breakdown.travelFee,
+              taxes: 0,
               total: breakdown.total,
               smartNotes: payload.notes,
               updatedAt: new Date()
@@ -193,6 +194,7 @@ export const POST = async (request: Request) => {
               requestId: createdRequest.id,
               subtotal: breakdown.totalBeforeDiscount,
               fees: breakdown.travelFee,
+              taxes: 0,
               total: breakdown.total,
               smartNotes: payload.notes,
               expiresAt: payload.preferredDate ? new Date(payload.preferredDate) : undefined

@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Loader2, Mail, Phone, UserPlus, ShieldCheck, Brush } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/src/components/ui/card";
-import { cn, formatCurrency } from "@/src/lib/utils";
 
 type AdminUser = {
   id: string;
@@ -227,7 +226,7 @@ const AdminTeamPage = () => {
       <div className="grid gap-6 lg:grid-cols-2">
         <TeamListCard
           title="Cleaners"
-          icon={Broom}
+          icon={Brush}
           description="Active cleaners with access to the job marketplace and payouts dashboard."
           loading={loading}
           emptyMessage="No cleaners yet. Add your first cleaner above."
