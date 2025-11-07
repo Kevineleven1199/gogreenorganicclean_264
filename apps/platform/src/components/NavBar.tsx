@@ -2,14 +2,24 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { LogoutButton } from "@/src/components/LogoutButton";
 
 type NavItem = {
   label: string;
   href: string;
   external?: boolean;
+};
+
+type NavBarSession = {
+  name: string;
+  role: "HQ" | "CLEANER" | "CUSTOMER";
+};
+
+type NavBarProps = {
+  session?: NavBarSession | null;
 };
 
 const NAV_ITEMS: NavItem[] = [
@@ -23,11 +33,24 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Contact", href: "#quote" }
 ];
 
-export const NavBar = () => {
+const PORTAL_LINK: Record<NavBarSession["role"], string> = {
+  HQ: "/admin",
+  CLEANER: "/cleaner",
+  CUSTOMER: "/client"
+};
+
+export const NavBar = ({ session }: NavBarProps) => {
   const [open, setOpen] = useState(false);
 
   const toggle = () => setOpen((prev) => !prev);
   const close = () => setOpen(false);
+  const portalHref = session ? PORTAL_LINK[session.role] : null;
+  const portalLabel = useMemo(() => {
+    if (!session) return null;
+    if (session.role === "HQ") return "Admin Portal";
+    if (session.role === "CLEANER") return "Crew Portal";
+    return "Client Portal";
+  }, [session]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-brand-50 bg-white/95 shadow-sm backdrop-blur">
@@ -56,12 +79,38 @@ export const NavBar = () => {
               {item.label}
             </Link>
           ))}
-          <Link
-            href="#quote"
-            className="inline-flex min-h-[40px] items-center justify-center rounded-full bg-accent px-5 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-white shadow-brand transition hover:bg-brand-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-200"
-          >
-            Get a Quote
-          </Link>
+          <div className="flex items-center gap-3">
+            {session ? (
+              <>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-brand-700">{portalLabel}</span>
+                <Link
+                  href={portalHref ?? "/login"}
+                  className="inline-flex min-h-[36px] items-center justify-center rounded-full border border-brand-200 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-accent transition hover:border-brand-300 hover:text-brand-700"
+                >
+                  Open Portal
+                </Link>
+                <LogoutButton className="text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground hover:text-accent" />
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground hover:text-accent">
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="inline-flex min-h-[36px] items-center justify-center rounded-full border border-brand-200 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-accent transition hover:border-brand-300 hover:text-brand-700"
+                >
+                  Register
+                </Link>
+              </>
+            )}
+            <Link
+              href="#quote"
+              className="inline-flex min-h-[40px] items-center justify-center rounded-full bg-accent px-5 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-white shadow-brand transition hover:bg-brand-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-200"
+            >
+              Get a Quote
+            </Link>
+          </div>
         </nav>
 
         <button
@@ -105,6 +154,40 @@ export const NavBar = () => {
               >
                 Book Your Clean
               </Link>
+              <div className="flex flex-col gap-3 pt-4">
+                {session ? (
+                  <>
+                    <Link
+                      href={portalHref ?? "/login"}
+                      onClick={close}
+                      className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-brand-200 px-5 py-3 text-sm font-semibold uppercase tracking-[0.24em] text-accent"
+                    >
+                      Open {portalLabel}
+                    </Link>
+                    <LogoutButton
+                      variant="button"
+                      className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-accent bg-white px-5 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-accent"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      onClick={close}
+                      className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-brand-200 px-5 py-3 text-sm font-semibold uppercase tracking-[0.24em] text-accent"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href="/register"
+                      onClick={close}
+                      className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-brand-200 px-5 py-3 text-sm font-semibold uppercase tracking-[0.24em] text-accent"
+                    >
+                      Register
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
           </motion.nav>
         ) : null}

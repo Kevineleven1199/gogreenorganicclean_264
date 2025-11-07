@@ -11,10 +11,15 @@ import { CredentialsSection } from "@/src/components/CredentialsSection";
 import { FAQSection } from "@/src/components/FAQSection";
 import { QuoteSection } from "@/src/components/QuoteSection";
 import { Footer } from "@/src/components/Footer";
+import { getSession } from "@/src/lib/auth/session";
 
-const HomePage = () => (
-  <main className="bg-surface">
-    <NavBar />
+const HomePage = async () => {
+  const session = await getSession();
+  const navSession = session ? { name: session.name, role: session.role } : null;
+
+  return (
+    <main className="bg-surface">
+      <NavBar session={navSession} />
     <HeroSection />
     <StatsSection />
     <PillarsSection />
@@ -26,8 +31,9 @@ const HomePage = () => (
     <ServiceAreasSection />
     <FAQSection />
     <QuoteSection />
-    <Footer />
-  </main>
-);
+      <Footer />
+    </main>
+  );
+};
 
 export default HomePage;
