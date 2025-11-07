@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from "react";
-import { Loader2, Mail, Phone, UserPlus, ShieldCheck, Broom } from "lucide-react";
+import { Loader2, Mail, Phone, UserPlus, ShieldCheck, Brush } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/src/components/ui/card";
 import { cn, formatCurrency } from "@/src/lib/utils";
 

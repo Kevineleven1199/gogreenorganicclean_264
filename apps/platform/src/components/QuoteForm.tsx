@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Input } from "@/src/components/ui/input";
 import type { QuoteAddOn, QuoteFrequency, QuoteServiceType, QuoteLocationTier } from "@/src/lib/pricing";
+import { AddressAutocomplete } from "@/src/components/AddressAutocomplete";
 
 type QuoteAction = "preview" | "accept" | "decline";
 
@@ -104,6 +106,7 @@ const countFromSelect = (value: string) => {
 };
 
 export const QuoteForm = () => {
+  const router = useRouter();
   const [formValues, setFormValues] = useState(initialForm);
   const [quoteResult, setQuoteResult] = useState<QuoteResponse | null>(null);
   const [status, setStatus] = useState<"idle" | "pricing" | "priced" | "accepted" | "declined">("idle");
@@ -111,6 +114,7 @@ export const QuoteForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [scheduleSlots, setScheduleSlots] = useState(defaultSchedulingSlots.map((slot) => ({ ...slot })));
   const [scheduleStatus, setScheduleStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [redirecting, setRedirecting] = useState(false);
 
   const updateField = <Key extends keyof typeof initialForm>(field: Key, value: (typeof initialForm)[Key]) => {
     setFormValues((prev) => ({
@@ -167,14 +171,34 @@ export const QuoteForm = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setStatus("pricing");
+    setRedirecting(true);
     const result = await requestQuote("preview");
-    if (result) {
-      setStatus("priced");
-      setScheduleSlots(defaultSchedulingSlots.map((slot) => ({ ...slot })));
-      setScheduleStatus("idle");
-    } else {
+    if (!result) {
       setStatus("idle");
+      setRedirecting(false);
+      return;
     }
+
+    setStatus("priced");
+    setScheduleSlots(defaultSchedulingSlots.map((slot) => ({ ...slot })));
+    setScheduleStatus("idle");
+
+    if (typeof window !== "undefined") {
+      const payload = {
+        ...result,
+        form: {
+          name: formValues.name,
+          email: formValues.email,
+          phone: formValues.phone,
+          address: `${formValues.address}${formValues.city ? `, ${formValues.city}` : ""}`,
+          serviceType: formValues.serviceType
+        }
+      };
+      window.sessionStorage.setItem("quote:last", JSON.stringify(payload));
+      window.sessionStorage.setItem(`quote:${result.quoteId}`, JSON.stringify(payload));
+    }
+
+    router.push(`/quote/confirmation?quoteId=${encodeURIComponent(result.quoteId)}`);
   };
 
   const handleDecision = async (action: QuoteAction) => {
@@ -273,12 +297,12 @@ export const QuoteForm = () => {
           value={formValues.phone}
           onChange={(event) => updateField("phone", event.target.value)}
         />
-        <Input
-          name="address"
-          placeholder="Service Address"
-          aria-label="Service Address"
+        <AddressAutocomplete
           value={formValues.address}
-          onChange={(event) => updateField("address", event.target.value)}
+          onChange={(val) => updateField("address", val)}
+          required
+          label="Service address"
+          placeholder="Start typing your street address"
         />
       </div>
 
@@ -458,7 +482,11 @@ export const QuoteForm = () => {
         {status === "pricing" ? "Calculating your quote..." : "See Instant Quote"}
       </button>
 
-      {error ? <p className="text-sm font-semibold text-red-600">{error}</p> : null}
+      {redirecting ? (
+        <p className="text-sm font-semibold text-accent">Hang tight—loading your confirmation screen…</p>
+      ) : error ? (
+        <p className="text-sm font-semibold text-red-600">{error}</p>
+      ) : null}
 
       {quoteResult ? (
         <div className="space-y-5 rounded-3xl border border-brand-100 bg-brand-50/50 p-6">
