@@ -11,5 +11,13 @@
     "start": "npm run start -w apps/platform",
     "lint": "npm run lint -w apps/platform",
     "prisma:generate": "npm run prisma:generate -w apps/platform"
+  },
+  "overrides": {
+    "react": "19.0.0-rc-66855b96-20241106",
+    "react-dom": "19.0.0-rc-66855b96-20241106"
+  },
+  "devDependencies": {
+    "react": "19.0.0-rc-66855b96-20241106",
+    "react-dom": "19.0.0-rc-66855b96-20241106"
   }
 }
