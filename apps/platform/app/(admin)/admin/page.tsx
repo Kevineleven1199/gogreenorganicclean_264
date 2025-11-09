@@ -3,6 +3,11 @@ import { Card, CardContent, CardHeader } from "@/src/components/ui/card";
 
 const quickLinks = [
   {
+    title: "View Pipeline",
+    description: "Track each home from intake to payout and spot reschedules instantly.",
+    href: "/admin/pipeline"
+  },
+  {
     title: "Review New Requests",
     description: "Approve or adjust incoming quotes before they reach your customers.",
     href: "/admin/requests"

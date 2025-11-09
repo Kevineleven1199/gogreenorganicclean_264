@@ -235,6 +235,9 @@ model JobAssignment {
   cleanerId String
   claimedAt DateTime       @default(now())
   status    String         @default("CLAIMED")
+  enRouteAt DateTime?
+  clockInAt DateTime?
+  clockOutAt DateTime?
 }
 
 model SchedulingPreference {

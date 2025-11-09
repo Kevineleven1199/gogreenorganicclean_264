@@ -8,6 +8,11 @@ const cleanerActions = [
     href: "/cleaner/jobs"
   },
   {
+    title: "Monitor Assigned Houses",
+    description: "Follow every home you've claimed and respond quickly if the customer needs to reschedule.",
+    href: "/cleaner/pipeline"
+  },
+  {
     title: "Review My Schedule",
     description: "Check start times, addresses, and access instructions for today and tomorrow.",
     href: "/cleaner/schedule"

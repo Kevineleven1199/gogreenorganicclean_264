@@ -8,6 +8,7 @@ type AdminLayoutProps = {
 
 const navItems = [
   { label: "Dashboard", href: "/admin" },
+  { label: "Pipeline", href: "/admin/pipeline" },
   { label: "Service Requests", href: "/admin/requests" },
   { label: "Automations", href: "/admin/automations" },
   { label: "Integrations", href: "/admin/integrations" }

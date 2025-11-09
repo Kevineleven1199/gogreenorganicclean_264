@@ -9,6 +9,7 @@ type CleanerLayoutProps = {
 const navItems = [
   { label: "Today", href: "/cleaner" },
   { label: "Job Board", href: "/cleaner/jobs" },
+  { label: "Pipeline", href: "/cleaner/pipeline" },
   { label: "Schedule", href: "/cleaner/schedule" },
   { label: "Payouts", href: "/cleaner/payouts" }
 ];
