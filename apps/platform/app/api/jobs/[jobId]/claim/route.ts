@@ -3,9 +3,10 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(
   request: Request,
-  { params }: { params: { jobId: string } }
+  { params }: { params: Promise<{ jobId: string }> }
 ) {
   try {
+    const { jobId } = await params;
     const { cleanerId } = (await request.json()) as { cleanerId?: string };
     if (!cleanerId) {
       return NextResponse.json(
@@ -15,7 +16,7 @@ export async function POST(
     }
 
     const job = await prisma.job.findUnique({
-      where: { id: params.jobId },
+      where: { id: jobId },
       include: {
         assignments: true
       }

@@ -159,9 +159,10 @@ const stageMeta: Record<PipelineStageId, (typeof STAGE_ORDER)[number]> = STAGE_O
 
 const parsePreferredWindows = (windows: Prisma.JsonValue | null): Array<{ start: Date; end: Date }> => {
   if (!windows || !Array.isArray(windows)) return [];
+
   return windows
-    .map((window) => (typeof window === "object" && window ? window : null))
-    .filter((entry): entry is Record<string, unknown> => entry !== null)
+    .map((window) => (typeof window === "object" && window && !Array.isArray(window) ? window : null))
+    .filter((entry): entry is Prisma.JsonObject => entry !== null)
     .map((entry) => {
       const start = typeof entry.start === "string" ? new Date(entry.start) : null;
       const end = typeof entry.end === "string" ? new Date(entry.end) : null;

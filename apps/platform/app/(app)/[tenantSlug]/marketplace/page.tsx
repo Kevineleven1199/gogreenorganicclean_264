@@ -1,11 +1,8 @@
 import MarketplaceBoard from "@/components/marketplace/board";
-
-type TenantPageProps = {
-  params: Promise<{ tenantSlug: string }>;
-};
+import { resolveTenantParams, type TenantPageProps } from "@/src/lib/tenant";
 
 const MarketplacePage = async ({ params }: TenantPageProps) => {
-  const { tenantSlug } = await params;
+  const { tenantSlug } = await resolveTenantParams(params);
 
   return (
     <div className="space-y-6">

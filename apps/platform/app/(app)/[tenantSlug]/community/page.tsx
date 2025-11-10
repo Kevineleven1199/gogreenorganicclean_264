@@ -1,11 +1,8 @@
 import CommunityFeed from "@/components/community/feed";
-
-type TenantPageProps = {
-  params: Promise<{ tenantSlug: string }>;
-};
+import { resolveTenantParams, type TenantPageProps } from "@/src/lib/tenant";
 
 const CommunityPage = async ({ params }: TenantPageProps) => {
-  const { tenantSlug } = await params;
+  const { tenantSlug } = await resolveTenantParams(params);
 
   return (
     <div className="space-y-6">

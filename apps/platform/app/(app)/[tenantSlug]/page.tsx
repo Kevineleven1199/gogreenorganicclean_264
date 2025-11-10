@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
+import { resolveTenantSlug, type TenantRouteParams } from "@/src/lib/tenant";
 
 type TenantRootPageProps = {
-  params: {
-    tenantSlug: string;
-  };
+  params: Promise<TenantRouteParams>;
 };
 
-const TenantRootPage = ({ params }: TenantRootPageProps) => {
-  redirect(`/${params.tenantSlug}/dashboard`);
+const TenantRootPage = async ({ params }: TenantRootPageProps) => {
+  const tenantSlug = await resolveTenantSlug(params);
+  redirect(`/${tenantSlug}/dashboard`);
 };
 
 export default TenantRootPage;

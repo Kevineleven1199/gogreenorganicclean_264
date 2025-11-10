@@ -25,14 +25,16 @@ const formatCleanerName = (assignment: {
   return full || "Your cleaner";
 };
 
+type LoadedJob = NonNullable<Awaited<ReturnType<typeof fetchJob>>>;
+
 const notifyStakeholders = async ({
   status,
   job,
   assignment
 }: {
   status: CleanerStatus;
-  job: Awaited<ReturnType<typeof fetchJob>>;
-  assignment: (typeof job.assignments)[number];
+  job: LoadedJob;
+  assignment: LoadedJob["assignments"][number];
 }) => {
   const cleanerName = formatCleanerName(assignment as any);
   const customerPhone = job.request.customerPhone;
@@ -77,7 +79,7 @@ const fetchJob = async (jobId: string) =>
 
 export const POST = async (
   request: Request,
-  { params }: { params: { jobId: string } }
+  { params }: { params: Promise<{ jobId: string }> }
 ) => {
   try {
     const session = await getSession();
@@ -87,7 +89,8 @@ export const POST = async (
 
     const raw = await request.json();
     const payload = statusSchema.parse(raw);
-    const job = await fetchJob(params.jobId);
+    const { jobId } = await params;
+    const job = await fetchJob(jobId);
 
     if (!job) {
       return NextResponse.json({ error: "Job not found" }, { status: 404 });
@@ -148,7 +151,7 @@ export const POST = async (
         break;
     }
 
-    const operations: Promise<unknown>[] = [];
+    const operations: Prisma.PrismaPromise<unknown>[] = [];
 
     if (Object.keys(assignmentUpdate).length > 0) {
       operations.push(

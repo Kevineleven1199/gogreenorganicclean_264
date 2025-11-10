@@ -4,9 +4,10 @@ import { finalizeJobAutomation } from "@/lib/notifications";
 
 export async function POST(
   request: Request,
-  { params }: { params: { jobId: string } }
+  { params }: { params: Promise<{ jobId: string }> }
 ) {
   try {
+    const { jobId } = await params;
     const body = await request.json();
     const { start, end, payoutAmount } = body as {
       start?: string;
@@ -22,7 +23,7 @@ export async function POST(
     }
 
     const job = await prisma.job.update({
-      where: { id: params.jobId },
+      where: { id: jobId },
       data: {
         scheduledStart: new Date(start),
         scheduledEnd: new Date(end),
