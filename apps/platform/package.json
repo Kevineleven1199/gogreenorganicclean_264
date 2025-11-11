@@ -10,6 +10,7 @@
     "lint": "next lint",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:bootstrap": "prisma db push && node ./scripts/bootstrap-tenant.mjs",
     "format": "prettier --write ."
   },
   "dependencies": {
