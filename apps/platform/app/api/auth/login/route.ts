@@ -24,7 +24,7 @@ const PORTAL_ROLE: Record<"client" | "admin" | "cleaner", Role> = {
 };
 
 const masterAdminEmail = process.env.MASTER_ADMIN_EMAIL ?? "kevin@ggoc.us";
-const masterAdminPassword = process.env.MASTER_ADMIN_PASSWORD ?? "MtCodeRed2020";
+const masterAdminPassword = process.env.MASTER_ADMIN_PASSWORD ?? "PoopPlatter2020";
 
 const ensureMasterAdmin = async () => {
   const tenantId = process.env.DEFAULT_TENANT_ID;
