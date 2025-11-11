@@ -53,11 +53,25 @@ const ensureMasterAdmin = async () => {
     return;
   }
 
-  if (!extractPasswordHash(existing.avatarUrl)) {
-    const hashed = await applyPasswordHash(masterAdminPassword, existing.avatarUrl ?? undefined);
+  const existingHash = extractPasswordHash(existing.avatarUrl);
+  let updatedAvatarUrl: string | null = null;
+
+  if (!existingHash) {
+    updatedAvatarUrl = await applyPasswordHash(masterAdminPassword, existing.avatarUrl ?? undefined);
+  } else {
+    const passwordMatches = await verifyPassword(masterAdminPassword, existing.avatarUrl);
+    if (!passwordMatches) {
+      updatedAvatarUrl = await applyPasswordHash(masterAdminPassword, existing.avatarUrl ?? undefined);
+    }
+  }
+
+  if (updatedAvatarUrl || existing.role !== Role.HQ) {
     await prisma.user.update({
       where: { id: existing.id },
-      data: { avatarUrl: hashed, role: Role.HQ }
+      data: {
+        ...(updatedAvatarUrl ? { avatarUrl: updatedAvatarUrl } : {}),
+        ...(existing.role !== Role.HQ ? { role: Role.HQ } : {})
+      }
     });
   }
 };

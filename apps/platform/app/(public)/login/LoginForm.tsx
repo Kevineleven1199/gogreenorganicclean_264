@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { fadeUp, staggerContainer } from "@/src/lib/animations";
 import { Card, CardContent, CardHeader } from "@/src/components/ui/card";
@@ -32,6 +33,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [pending, startTransition] = useTransition();
 
   const redirect = searchParams.get("redirect");
@@ -119,13 +121,23 @@ const LoginPage = () => {
 
               <label className="flex flex-col text-xs font-semibold uppercase tracking-[0.3em] text-accent">
                 Password
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  className="mt-2 rounded-xl border border-brand-100 bg-white px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-2 focus:ring-brand-200"
-                  required
-                />
+                <div className="mt-2 flex items-center gap-2 rounded-xl border border-brand-100 bg-white px-3 py-2 focus-within:border-accent focus-within:ring-2 focus-within:ring-brand-200">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    className="flex-1 border-none bg-transparent text-sm text-foreground focus:outline-none"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="text-brand-500 transition hover:text-brand-700"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                  </button>
+                </div>
               </label>
 
               {error ? <p className="text-sm text-red-500">{error}</p> : null}
